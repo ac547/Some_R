@@ -1,0 +1,146 @@
+---
+title: "Castellano_CS636_Lab03"
+output:
+  html_notebook: default
+  pdf_document: default
+  author: "Andres Castellano"
+  date: "2/15/2020" 
+---
+
+
+# Question #1
+
+Please read the train.csv file into R and store the data in a variable called “X”.
+
+```{r}
+library(readr)
+X <- read_csv('C:/Users/Castellano/Documents/Spring2020/CS636/Home Depot/train.csv/train.csv')
+```
+
+# Question #2
+
+Write a function, called “distinct_relevance”, to count how many distinct values are in the column “relevance”? So when we call the function, it returns the desired results:
+distinct_relevance (vect = X$relevance);
+
+```{r}
+distinct_relevance <- function(vector) {
+  elementos <- c(rep(0,length(vector)))
+  for (i in 1:length(vector)) {
+    boo <- vector[i] %in% elementos
+   if( boo == FALSE) {
+    #print('Not in')
+     elementos[i] <- vector[i]
+   } else {
+      next
+    }
+  }
+  elementos <- elementos[!elementos %in% 0]
+  return(elementos)
+}
+
+relevant <- distinct_relevance(X$relevance)
+print(relevant) 
+
+```
+3, Write a function, called “count”, to count the number of appearances of a value, e.g. 3, in the column “relevance”, so when we call the function, it returns the desired results:
+count(vect = X$relevance, value=3);
+(For Q2 and Q3, please do not use existing R packages or functions.)
+```{r}
+count <- function(vector, value) {
+  cuenta <- 0
+  for (i in 1:length(vector)) {
+   if( vector[i] == value) {
+     cuenta <- cuenta + 1 
+   }
+  }
+  return(cuenta)
+}
+
+count(X$relevance,3.00)
+```
+
+
+# Question #4 
+
+Compare the results with R function: table()
+
+```{r}
+system.time(relevance_values <- distinct_relevance(X$relevance))
+relevance_counts <- count(X$relevance,3.00)
+system.time(table(X$relevance))
+```
+Hmmmmmm, the table() function is A LOT more efficient. Wondering why.
+
+5. Pi can be computed by adding the following terms (http://en.wikipedia.org/wiki/Pi): How many terms does it take to get the first 3 digits to be correct, 3.14? Write an R function getPi(N) to compute it, where N specifies the first N digits to be correct, and returns #terms.
+
+
+```{r}
+getPi <- function(N){
+  'This function only works for N < 10.
+  If a higher precision is desired, this function can be modified as
+  an implementation of a while loop instead.'
+  old_pie <- 4
+  for (k in 1:10^N){
+    new_pie <- old_pie + 4*((-1)^k)/(2*k+1)
+     #print(new_pie)
+  if ( abs(new_pie-old_pie) < 1*10^(-(N-1)  )) {
+    k <- paste(toString(k), "Iterations Required")
+    new_pie <- round(new_pie, digits = N + 1) 
+    Y <- list(k, new_pie) 
+    break
+  }
+    old_pie <- new_pie
+  }
+  
+  return(Y)
+}
+N <- getPi(3)
+print(N)
+class(N)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

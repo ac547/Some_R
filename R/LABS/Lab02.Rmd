@@ -1,0 +1,277 @@
+---
+title: "Castellano_CS636_Lab02"
+output:
+  html_notebook: default
+  pdf_document: default
+---
+### February 3, 2020
+
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+# Question 1 Home Depot Data 
+
+## **a)** Read in Home Dept Data (all csv files) and find their dimensions.
+
+https://www.kaggle.com/c/home-depot-product-search-relevance/data
+
+The following sets up an API to access Kaggle data directly from R. 
+
+Run:
+
+> install.packages("devtools)
+
+> devtools::install_github("mkearney/kaggler")
+
+**Note** You may have to install Rtools. If needed, it can be found here:
+
+https://cran.r-project.org/bin/windows/Rtools/
+
+
+
+```{r}
+
+library(kaggler)
+kgl_auth(username = "andrescastellano", key = "2c9485c3957e5c115b8f255ca0e52378")
+```
+
+```{r}
+kgl_competitions_list(search="depot")
+
+```
+Competition Id is 4853
+
+```{r}
+c1_datalist <- kgl_competitions_data_list(4853)
+c1_datalist
+c1_data <- kgl_competitions_data_download(4853,c1_datalist$attributes.csv.zip) 
+```
+
+
+The API is not working. Will try and fix later.
+
+### **Loading all .csv files**
+
+```{r}
+attributes <- read.csv('C:/Users/Castellano/Documents/Spring2020/CS636/Home Depot/attributes.csv/attributes.csv') # Attributes
+
+dim(attributes)
+
+prod_desc <- read.csv('C:/Users/Castellano/Documents/Spring2020/CS636/Home Depot/product_descriptions.csv/product_descriptions.csv')
+
+dim(prod_desc)
+
+test <- read.csv('C:/Users/Castellano/Documents/Spring2020/CS636/Home Depot/test.csv/test.csv')
+
+dim(test)
+
+train <- read.csv('c:/Users/Castellano/Documents/Spring2020/CS636/Home Depot/train.csv/train.csv')
+
+dim(train)
+
+```
+## **b)** Show the right down corner element of each file in R. 
+
+```{r}
+attributes[2044803,3]
+prod_desc[124428,2]
+test[nrow(test),ncol(test)]
+train[nrow(train),ncol(train)]
+```
+## **c)** Output the odd numbers of columns and even number of rows of train.csv
+
+```{r}
+train[c(FALSE,TRUE),c(TRUE,FALSE)]
+
+```
+
+## **d)** Save into R objects and load them using dput, dget, save, load, save.image.
+
+```{r}
+fil <- tempfile()
+c <- train[c(FALSE,TRUE),c(TRUE,FALSE)]
+# dput(c)
+```
+
+## **e)** Install teh Readr pakage from CRAN.
+
+## **f)** Any difference in terms of speed and loading the data? Write a simple code to print out the time cost of reading the test.csv. data using read.csv or read_csv.
+
+### **Using *read_csv* **
+
+
+```{r}
+library(readr)
+system.time(read_csv('C:/Users/Castellano/Documents/Spring2020/CS636/Home Depot/test.csv/test.csv'))
+
+```
+
+### **Using *read.csv* **
+
+```{r}
+system.time(read.csv('C:/Users/Castellano/Documents/Spring2020/CS636/Home Depot/test.csv/test.csv'))
+```
+
+# Question 2
+
+## **a)** Create a new vector called "test" containing five numbers of your choice.
+```{r}
+test <- c(1,2,3,4,5)
+```
+## **b)** Create a second vector called "students" containing five common names.
+```{r}
+students <- c('Michelle','Bowie','Juan','Andres','James')
+```
+## **c)** Determine the class of test and students
+```{r}
+class(test)
+class(students)
+```
+
+## **d)** Create a data frame containing two columns students and test as defined above.
+```{r}
+dat <- data.frame(cbind(students,test))
+class(dat)
+```
+## **e)** Convert "test" to character class, and confrim that you were succesful.
+
+```{r}
+test <- as.character(test)
+class(test)
+```
+# Question 3
+
+## **a)** Select just sepal lenght and species columns from the Iris data set and save the result to a new data.frame named iris2.
+```{r}
+data(iris)
+iris2 <- data.frame(iris$Sepal.Length,iris$Species)
+colnames(iris2) <- c("Sepal Length", "Species")
+head(iris2)
+
+```
+
+## **d)** Calculate the mean of the sepal length column in iris2.
+
+```{r}
+avg_sep_length <- mean(iris2$`Sepal Length`)
+```
+
+
+## **c)** Calculate the mean of sepal.length, but only for setosa species
+
+```{r}
+# setosas <- subset(iris2, Species == 'setosa')
+# mean(setosas$`Sepal Length`)
+mean(subset(iris2, Species == 'setosa')$'Sepal Length')
+```
+ ## **d)** Calculate the number of sepal lengths that are more than one standard deviation below the average sepal length
+ 
+```{r}
+std_dev <- sd(iris2$`Sepal Length`)
+Low_Bound <- avg_sep_length - std_dev
+nrow(iris2[iris2$'Sepal Length' < Low_Bound,])
+```
+ 
+# Question 4 Write R commands for the following questions:
+
+## **a)** 1000, 1000, 998, 998, 996, 996, …… , 4, 4, 2, 2
+
+```{r}
+rep(seq(from = 1000, to = 2, by = -2), each = 2)
+```
+## **b)** Generate a sequence of 10 "a" and 5 "b"
+
+```{r}
+rep(c('a','b'), c(10,5))
+```
+## **c)** Print rever the order of **b)**
+
+```{r}
+rev(rep(c('a','b'),c(10,5)))
+```
+
+# Question 5 
+
+Find the row numbers in the iris data set, where the Petal.Length is larger than 5 and Petal.Width is less than 1.7.  And print out this part of the iris data set.
+
+```{r}
+iris[iris$Petal.Length > 5 & iris$Petal.Width < 1.7,]
+```
+
+# Question 6
+
+Guess what the following matrix would look like and the results of the following commands and compare with the real results.
+
+
+**x <- matrix(c(rep(6,3), seq(10,2,-3),x(NA,3,4),6,1,10),4,3)**
+
+```{r}
+x <- matrix(c(rep(6,3), seq(10,2,-3),c(NA,3,4), 6,1,10), 4, 3)
+```
+
+__print(x[,x[2,] > 4])__
+
+Select from matrix x, all the rows and columns for which the second row of any column is greater than 4. 
+
+```{r}
+print(x[,x[2,] > 4])
+```
+
+__print(x[,2] < 4)__
+
+Print the elements of x for which the second column is less than 4
+
+```{r}
+print(x[,2] < 4)
+```
+Wrong, this code prints logical whether or not the elements are < 4
+
+<br />
+
+
+print(x[x[,2] < 4,])
+
+Prints the actual values of x for which the second column is less than 4 
+
+```{r}
+print(x[x[,2] < 4,])
+```
+ Don't actually understand what this did.
+ 
+ __sum(x[x > 6])__
+ Sums all the values of elements of x > 6
+```{r}
+x
+sum(x[x > 6])
+```
+ Don't understand NA.
+ 
+ __sum(x[x > 6],na.rm=T)__
+ 
+This shall remove the NAs from Calc. Which makes me think the reason it didnt work before, is because you cannot add numbers to NAs.
+
+```{r}
+sum(x[x > 6],na.rm=T)
+```
+ 
+__order(x[,3])__
+This should order the elements of x along the third axis in ascending order.
+
+```{r}
+order(x[,3])
+```
+It didn't. It ordered the INDICES of the matrix according to the increasing value of elements. 
+
+__x[order(x[,3]),]__
+
+This should do what I thought the prvious code was going to do.
+
+```{r}
+x[order(x[,3]),]
+
+```
+
+It did.
+
+Thanks.
+ 

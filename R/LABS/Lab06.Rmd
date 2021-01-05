@@ -1,0 +1,189 @@
+---
+title: "Castellano_Lab06"
+output: html_notebook
+---
+
+Download the Allstate Claims Severity training data file from kaggle. 
+
+```{r}
+data = read.csv( "C:/Users/Castellano/Documents/Spring2020/CS636/All State Severity/train.csv")
+```
+
+## Extracting numerical variables 
+
+```{r}
+
+#Applying the is.numeric function to the columns of "data", and then passing the output to the unlist function and selecting the resulting logical true columns from the original dataset, we get: 
+train_x0 <- data[unlist(lapply(data, is.numeric))]
+
+str(train_x0)
+```
+
+## Data preparation
+
+```{r}
+# Remove ID and loss features since they do not belong to the training data.
+loss_1 <- vector()
+loss_1 <- train_x0$loss # Save to use as target later.
+
+# Remove features
+
+train_x <- train_x0[,c(-1,-length(train_x0))] # Removes from all rows, first and last column (ID, loss)
+```
+# 1. Hierarchical Clustering
+
+Do hierarchical clustering of the samples using the numeric features, and retrieve the two largest clusters. Then for each of these two clusters, find out how many samples with loss > the median loss; and how many with loss < the median loss.
+
+```{r}
+set.seed(1) # Make runs reproducible
+id = sample(1:dim(train_x)[1],10000) # Sample 10000 datapoints from all the rows of training data.
+
+```
+```{r}
+sample_x <- train_x[id,] # Creates a sampled dataset
+str(sample_x)
+```
+```{r}
+loss_x = train_x0[id,15] # Selects the corresponding targets of the sampled data set for training
+str(loss_x)
+```
+
+## Training (Clustering)
+
+```{r}
+
+clusters <- hclust(dist(sample_x[,]), method = 'ave') # Trains Clustering Algo
+plot(clusters, hang = -1) 
+rect.hclust(clusters,k=2) # Selects two largest clusters
+groups = cutree(clusters,k=2) # Selects two largest clusters
+
+# Cluster Sizes
+table(groups)
+```
+
+
+```{r}
+# Adding Loss and Class columns to the dataset
+sample_x$loss = loss_x
+sample_x$class = groups
+str(sample_x)
+```
+
+```{r}
+# Calculating the Median of Loss column for the 2 Cluster classes
+median_1_hr = median(sample_x[sample_x$class==1,"loss"])
+median_2_hr = median(sample_x[sample_x$class==2,"loss"])
+
+# For each Cluster, finding # of samples with loss > median and loss < median
+length(sample_x[sample_x$loss > median_1_hr & sample_x$class == 1,"loss"])
+length(sample_x[sample_x$loss <= median_1_hr & sample_x$class == 1,"loss"])
+length(sample_x[sample_x$loss <= median_2_hr & sample_x$class == 2,"loss"])
+length(sample_x[sample_x$loss > median_2_hr & sample_x$class == 2,"loss"])
+
+
+```
+
+For a Cluster of 10k observations, it makes sense than 5k of the obvservations fall above the median, and the other 5k below.
+
+
+# 2. K - means Clustering	
+
+Do kmeans clustering of the samples using the numeric features, by setting k=2. Then for each of these two clusters, find out how many samples with loss > the median loss; and how many with loss < the median loss.
+
+```{r}
+# Applying KMeans cwith two clusters
+kmeans.result = kmeans(train_x, 2)
+```
+                       
+```{r}
+# Checking the sizes of the 2 Clusters
+kmeans.result$size
+```
+
+```{r}
+#Adding the Cluster values(1 or 2) as a column to the dataset
+x = vector()
+x = kmeans.result$cluster
+train_x$loss = loss_1
+train_x$class = x
+
+```
+
+
+```{r}
+# Calculating the Median of Loss column for the 2 Cluster classes
+median_1 = median(train_x[train_x$class==1,"loss"])
+median_2 = median(train_x[train_x$class==2,"loss"])
+
+
+length(train_x[train_x$loss > median_1 & train_x$class == 1,"loss"])
+length(train_x[train_x$loss <= median_1 & train_x$class == 1,"loss"])
+length(train_x[train_x$loss <= median_2 & train_x$class == 2,"loss"])
+length(train_x[train_x$loss > median_2 & train_x$class == 2,"loss"])
+
+```
+
+
+
+
+# 3. PCA
+
+Do PCA of the data using the numeric features and use the first two PCs to represent a sample and re-do Question 1 and Question 2. Also generate barplot of the variance of the first five PCs.
+Hint: use prcomp function in R
+
+```{R}
+
+res.pca = prcomp(train_x[,-c(15,16)])
+```
+
+
+## Calculating Variances
+
+```{r}
+sd = res.pca$sdev
+var = sd^2
+```
+## Barplot of the Variance of the First 5 PCAs
+```{r}
+barplot(var[1:5]*10,space = 0,xlim = c(0,5),ylim = c(0,4),main = 'Variance of First 5 PCs')
+```
+
+
+```{r}
+new_train = -res.pca$x[,1:2]
+```
+## Converting to a DataFrame
+
+```{r}
+
+new_train = as.data.frame(new_train)
+
+```
+## Kmeans Clustering after PCA 
+```{r}
+kmeans.result_pca = kmeans(new_train,2)
+```
+## Cluster Sizes
+```{r}
+kmeans.result_pca$size
+```
+## Adding Loss and Cluster(as Class) to the Dataset
+```{r}
+new_train_kmeans = new_train
+new_train_kmeans$loss = loss_1
+new_train_kmeans$class = kmeans.result_pca$cluster
+```
+
+
+## Calculating the Median of Loss column for the 2 Cluster classes
+
+```{r} 
+median_1_kmean = median(new_train_kmeans[new_train_kmeans$class==1,"loss"])
+median_2_kmean = median(new_train_kmeans[new_train_kmeans$class==2,"loss"])
+
+
+length(new_train_kmeans[new_train_kmeans$loss > median_1_kmean & new_train_kmeans$class == 1,"loss"])
+length(new_train_kmeans[new_train_kmeans$loss <= median_1_kmean & new_train_kmeans$class == 1,"loss"])
+length(new_train_kmeans[new_train_kmeans$loss <= median_2_kmean & new_train_kmeans$class == 2,"loss"])
+length(new_train_kmeans[new_train_kmeans$loss > median_2_kmean & new_train_kmeans$class == 2,"loss"])
+```

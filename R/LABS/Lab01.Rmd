@@ -1,0 +1,163 @@
+---
+title: "Castellano_CS636_Lab01"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+### January 27, 2020
+
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+
+## 1.1 Use R as you would a calculator to find numeric answers to the following:
+ 
+```{r}
+1+2*(3+4)
+4**3+3**(2+1)
+sqrt((4+3)*(2+1))
+((1+2)/(3+4))**2
+
+```
+
+## 1.2 Rewrite these R expressions as math expressions, using parentheses to show the order in which R performs the computations.
+
+```{r}
+(2 + 3) -4
+2+(3*4)
+(2/3)/4
+(2*3*4)
+
+# Apparently, R uses proper Order of Operations 
+
+```
+
+## 1.3 Use R to compute the following
+
+```{r}
+(1+2*3**4)/(5/6-7)
+```
+## Getting Started With R
+
+## 1.4 Use R to Compute the Following
+```{r}
+(0.25-0.2)/sqrt(0.2*(1-0.3)/100)
+```
+
+## 1.5 Assign the numbers 2 through 5 to different variables, then use the variables to multiply all the values.
+
+```{r}
+a <- 1
+b <- 2
+c <- 3
+d <- 4
+e <- 5
+
+prod(a,b,c,d,e)
+factorial(5)
+
+```
+
+## 1.6 The rivers data set is loaded when R is. View the data by typing its name and then the return key. What is the value listed?
+```{r}
+rivers
+```
+
+The last value listed is 1770.
+
+## 1.7 The exec.pay (UsingR) data set is available from the command line after loading the package UsingR. Load the package, and inspect the data set. Scan the values to find the largest one.
+```{r}
+library(UsingR)
+exec.pay
+max(exec.pay)
+```
+
+## 1.8 For the exec.pay (UsingR) data set, apply the functions, mean, min and max. What are the values found?
+```{r}
+A <- c(exec.pay)
+mean(A) 
+min(A)
+#print('The maximum is {}').format(max(A))
+max(A)
+```
+
+## 1.9 The basic mean function has an additional arguent, trim. When given, the specified proportion of the data is trimmed from the sorted data before the mean is taken. Compare the difference between mean(exec.pay) and mean(exec.pay, trim=0.10)
+```{r}
+mean(exec.pay)
+mean(exec.pay, trim=0.10)
+```
+
+## 1.10 The orange data set is stored as a data frame with three variables. What are the three variables?
+```{r}
+data("Orange")
+ls()
+head(Orange)
+```
+The three variables are tree, age, and circumference.
+
+## 1.11 Compute the average age of the trees in the Orange data set using mean.
+```{r}
+mean(Orange[,'age'])
+```
+
+## 1.12 Compute the largest circumference of the trees in the Orange dataset.
+```{r}
+max(Orange[,'circumference'])
+```
+
+## 1.18 Define x and y with
+```{r}
+x = c(1,3,5,7,9)
+y = c(2,3,5,7,11,13)
+```
+Try to guess the result of these R commands
+```{r}
+x+1 # Element wise addition of 1
+y*2 # Element wise multiplication by 2
+```
+### 3. lenght(x) and length(y)
+```{r}
+length(x) # 5
+length(y) # 6
+```
+### 4. x+y (recycling)
+```{r}
+x+y # Do not know
+```
+### 5. sum(x>5) and sum(x[x>5])
+```{r}
+sum(x>5) # 16
+sum(x[x>5]) # Error
+```
+Interesting. sum(x>5) is a sum of the NUMBER of elements that are greater than 5. sum(x[x>5]) is a sum of the elements themselves which are greater than 5. sum(x>3) should = 3.sum(x[x>3]) should = 21
+```{r}
+sum(x>3)
+sum(x[x>3])
+```
+### 6. sum(x>5|x<3)
+```{r}
+sum(x>5|x<3) # sum of number of elements greater than 5 or less than 3. 
+# ans = 3
+```
+### 7. y[3]
+```{r}
+y[3] # ans = 5
+```
+### 8. y[-3]
+```{r}
+y[-3] # ans = 11
+```
+
+Interesting. Unlike Python, y[-3] removes the third element from the vector. In Python, y[-3] would select the 3 element from the end of the vector.
+
+### 9. y[x] (What is NA)
+```{r}
+y[x]
+```
+NA possibly means 'Not Applicable.' In this case, the computations y[7] and y[9] do 'Not Apply' becasue length(y) < 7 or 9. There are no 7th or 9th elements in y.
+
+### 10. y[y>=7]
+```{r}
+y[y>=7] # Selects elements greater or equal to 7 in vector y.
+```
+

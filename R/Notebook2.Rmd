@@ -1,0 +1,128 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# CS636 Homework 2
+
+Please submit the code together with the running results of the testing commands.
+
+Please do not use existing R packages and functions like sort(), order() and so on.
+
+## 1) Piecewise Function
+Write a function, F(x), which takes x as the input parameter. It calculates and prints the value of the following mathematical function.
+
+
+```{r}
+F <- function(x){
+  if (x < 1){
+    f <- 5/(x-1)**2}
+  else if ( x == 1){
+    f <- 2}
+  else {
+    f <- 5/(x-1)**3}
+  return(f)
+  print(f)
+  }
+```
+
+Testing commands:	F(1);	F(10);	F(0.3);
+
+```{r}
+F(0.3)
+```
+
+# 2) Fibonacci
+The Fibonacci sequence 1, 1, 2, 3, 5, 8, 13, 21…… starts with two 1s, and each term afterwards is the sum of its two predecessors. Please write a function, Fib(n), which takes n as the input parameter. It will return the n-th number in the Fibonacci sequence.
+
+```{r}
+Fib <-  function(n){
+  ni <- 1
+  nj <- 1
+  if (n <= 2){
+    fib <- ni
+    return(fib)}
+  else if ( n > 2){
+    for (i in seq(3,n)){
+      fib <- ni + nj
+      ni <- nj
+      nj <- fib}
+    return(fib)
+    }
+}
+```
+
+
+
+Testing commands:	Fib(1);	Fib(2);	Fib(100);
+ 
+```{r}
+Fib(8) #Tested with Fib(1). Fib(2), Fib(8)
+```
+
+# 3 Merge Algorithm
+The merge operation plays an important role in merge sort algorithm. Suppose you have two sorted sequences S1 and S2, merge operation will combine these two sequences into a single ordered sequence. Please write a function, Merge(S1, S2), which accepts two ordered vectors S1 and S2 as parameters. It will return a single ordered sequence. For example,
+S1 = c(1,3,5,7);
+S2=c(2,4,6,10);
+Merge(S1, S2) will return c(1,2,3,4,5,6,7,10)
+
+```{r}
+Merge <- function(s1 , s2){
+  fin <- c()
+  size_1 <- length(s1)
+  size_2 <- length(s2)
+  
+  
+  i <- 1
+  j <- 1
+  
+  while (i < size_1 && j < size_2){
+    if (s1[i] < s2[j]){
+      fin <- append(fin, s1[i])
+      i <- i +1}
+    else {
+      fin <- append(fin, s2[j])
+      j <- j +1}
+  }
+  fin <- append(fin,c(s1[i:size_1],s2[j:size_2]))
+}
+```
+
+
+Testing commands:	Merge(seq(1, 50, by=3), seq(2, 30, by=2))
+
+```{r}
+res <- Merge(seq(1, 50, by=3), seq(2, 30, by=2))
+print(res)
+```
+
+
+# 4) Quick Sort Algorithm
+One of the most important algorithms is the quick sort, which is based on the quick sort partition. Here we implement a simple version of the partition function. Please write a function, Partition(pivot, vect), which takes two parameters. The function partitions the sequence, vect, into two parts (part1 <= pivot; part2 > pivot) based on the pivot. For example,
+Pivot = 6;
+Vect = c(1, 5, 3, 7, 9, 6, 4, 2, 10, 8);
+List = Partition(Pivot, Vect);
+List[[1]] is c(1,5,3,4,2, 6) and List[[2]] is c(7, 9, 10, 8).
+
+Note that Partition returns a list.
+
+```{r}
+Partition <- function(Pivot, Vect){
+  first <- c()
+  last <- c()
+  for (i in seq(1,length(Vect))){
+    if (Vect[i] <= Pivot){
+      first<-append(first,Vect[i])}
+    else {last<-append(last,Vect[i])}}
+  res <- list(first,last)
+  return(res)}
+```
+
+
+Testing commands:	Partition(50, sample(1:100, 100, replace=F) 
+
+```{r}
+Partition(50, sample(1:100, 100, replace=FALSE))
+```
+
+
